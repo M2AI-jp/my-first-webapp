@@ -1,14 +1,664 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>My First Web App</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生すごろくゲーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>こんにちは！</h1>
-  <button id="btn">クリックしてね</button>
-  <p id="msg"></p>
-  <script src="script.js"></script>
+    <div class="game-container">
+        <!-- ゲームタイトル -->
+        <header class="game-header">
+            <h1>人生すごろくゲーム</h1>
+            <p class="subtitle">〜 幼少期から社会人まで 〜</p>
+        </header>
+
+        <!-- ゲーム情報パネル -->
+        <div class="game-info">
+            <div class="player-info">
+                <h3>🎮 プレイヤー</h3>
+                <div class="money-display">
+                    <span class="money-label">所持金:</span>
+                    <span class="money-amount" id="player-money">1000</span>
+                    <span class="money-unit">円</span>
+                </div>
+                <div class="position-display">
+                    <span class="position-label">現在位置:</span>
+                    <span class="position-value" id="player-position">スタート</span>
+                </div>
+            </div>
+            
+            <div class="cpu-info">
+                <h3>🤖 CPU</h3>
+                <div class="money-display">
+                    <span class="money-label">所持金:</span>
+                    <span class="money-amount" id="cpu-money">1000</span>
+                    <span class="money-unit">円</span>
+                </div>
+                <div class="position-display">
+                    <span class="position-label">現在位置:</span>
+                    <span class="position-value" id="cpu-position">スタート</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ゲーム盤面 -->
+        <div class="game-board">
+            <!-- フェーズ表示 -->
+            <div class="phase-indicators">
+                <div class="phase-indicator childhood">
+                    <span class="phase-icon">🍼</span>
+                    <span class="phase-name">幼少期</span>
+                    <span class="phase-range">(1-10)</span>
+                </div>
+                <div class="phase-indicator school">
+                    <span class="phase-icon">📚</span>
+                    <span class="phase-name">学校編</span>
+                    <span class="phase-range">(11-20)</span>
+                </div>
+                <div class="phase-indicator work">
+                    <span class="phase-icon">💼</span>
+                    <span class="phase-name">社会人編</span>
+                    <span class="phase-range">(21-40)</span>
+                </div>
+            </div>
+
+            <!-- 盤面マス -->
+            <div class="board-grid">
+                <!-- スタートマス -->
+                <div class="square start-square" data-position="0">
+                    <div class="square-header">
+                        <span class="square-number">START</span>
+                        <span class="square-icon">🏁</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">人生スタート</div>
+                        <div class="square-description">元気よく出発！</div>
+                    </div>
+                    <div class="player-tokens">
+                        <div class="token player-token" id="player-token-0">🎮</div>
+                        <div class="token cpu-token" id="cpu-token-0">🤖</div>
+                    </div>
+                </div>
+
+                <!-- 幼少期マス (1-10) -->
+                <div class="square childhood-square" data-position="1">
+                    <div class="square-header">
+                        <span class="square-number">1</span>
+                        <span class="square-icon">🍼</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">初めての歩行</div>
+                        <div class="square-description">パパママが喜んでお小遣い</div>
+                        <div class="square-effect">+200円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square childhood-square" data-position="2">
+                    <div class="square-header">
+                        <span class="square-number">2</span>
+                        <span class="square-icon">🎈</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">誕生日プレゼント</div>
+                        <div class="square-description">おじいちゃんからお年玉</div>
+                        <div class="square-effect">+300円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square childhood-square" data-position="3">
+                    <div class="square-header">
+                        <span class="square-number">3</span>
+                        <span class="square-icon">😭</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">転んで大泣き</div>
+                        <div class="square-description">お菓子代がなくなった</div>
+                        <div class="square-effect">-100円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square childhood-square" data-position="4">
+                    <div class="square-header">
+                        <span class="square-number">4</span>
+                        <span class="square-icon">🎪</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">サーカスを見に行く</div>
+                        <div class="square-description">入場料がかかった</div>
+                        <div class="square-effect">-150円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square childhood-square" data-position="5">
+                    <div class="square-header">
+                        <span class="square-number">5</span>
+                        <span class="square-icon">🍭</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">お手伝いでお小遣い</div>
+                        <div class="square-description">お母さんのお手伝い</div>
+                        <div class="square-effect">+100円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square childhood-square" data-position="6">
+                    <div class="square-header">
+                        <span class="square-number">6</span>
+                        <span class="square-icon">🎨</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">絵画コンクール</div>
+                        <div class="square-description">賞金をもらった</div>
+                        <div class="square-effect">+250円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square childhood-square" data-position="7">
+                    <div class="square-header">
+                        <span class="square-number">7</span>
+                        <span class="square-icon">🚲</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">自転車の練習</div>
+                        <div class="square-description">転んで絆創膏代</div>
+                        <div class="square-effect">-50円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square childhood-square" data-position="8">
+                    <div class="square-header">
+                        <span class="square-number">8</span>
+                        <span class="square-icon">🎮</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">ゲーム機をねだる</div>
+                        <div class="square-description">お小遣いを前借り</div>
+                        <div class="square-effect">-200円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square childhood-square" data-position="9">
+                    <div class="square-header">
+                        <span class="square-number">9</span>
+                        <span class="square-icon">🦷</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">歯が抜けた</div>
+                        <div class="square-description">歯の妖精からプレゼント</div>
+                        <div class="square-effect">+100円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square childhood-square" data-position="10">
+                    <div class="square-header">
+                        <span class="square-number">10</span>
+                        <span class="square-icon">🎒</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">小学校入学</div>
+                        <div class="square-description">入学祝いをもらった</div>
+                        <div class="square-effect">+500円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <!-- 学校編マス (11-20) -->
+                <div class="square school-square" data-position="11">
+                    <div class="square-header">
+                        <span class="square-number">11</span>
+                        <span class="square-icon">📝</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">テストで満点</div>
+                        <div class="square-description">頑張ったご褒美</div>
+                        <div class="square-effect">+300円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square school-square" data-position="12">
+                    <div class="square-header">
+                        <span class="square-number">12</span>
+                        <span class="square-icon">📚</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">宿題を忘れる</div>
+                        <div class="square-description">先生に怒られて反省</div>
+                        <div class="square-effect">-100円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square school-square" data-position="13">
+                    <div class="square-header">
+                        <span class="square-number">13</span>
+                        <span class="square-icon">⚽</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">運動会で1位</div>
+                        <div class="square-description">賞品をもらった</div>
+                        <div class="square-effect">+200円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square school-square" data-position="14">
+                    <div class="square-header">
+                        <span class="square-number">14</span>
+                        <span class="square-icon">🎵</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">学芸会の主役</div>
+                        <div class="square-description">お疲れ様のお小遣い</div>
+                        <div class="square-effect">+150円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square school-square" data-position="15">
+                    <div class="square-header">
+                        <span class="square-number">15</span>
+                        <span class="square-icon">💔</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">友達とケンカ</div>
+                        <div class="square-description">仲直りのお菓子代</div>
+                        <div class="square-effect">-80円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square school-square" data-position="16">
+                    <div class="square-header">
+                        <span class="square-number">16</span>
+                        <span class="square-icon">🏆</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">漢字検定合格</div>
+                        <div class="square-description">お祝いをもらった</div>
+                        <div class="square-effect">+400円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square school-square" data-position="17">
+                    <div class="square-header">
+                        <span class="square-number">17</span>
+                        <span class="square-icon">🍫</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">バレンタインデー</div>
+                        <div class="square-description">チョコを買った</div>
+                        <div class="square-effect">-120円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square school-square" data-position="18">
+                    <div class="square-header">
+                        <span class="square-number">18</span>
+                        <span class="square-icon">🚌</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">修学旅行</div>
+                        <div class="square-description">お土産代がかかった</div>
+                        <div class="square-effect">-300円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square school-square" data-position="19">
+                    <div class="square-header">
+                        <span class="square-number">19</span>
+                        <span class="square-icon">📖</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">読書感想文コンクール</div>
+                        <div class="square-description">図書券をもらった</div>
+                        <div class="square-effect">+250円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square school-square" data-position="20">
+                    <div class="square-header">
+                        <span class="square-number">20</span>
+                        <span class="square-icon">🎓</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">卒業式</div>
+                        <div class="square-description">卒業祝いをもらった</div>
+                        <div class="square-effect">+600円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <!-- 社会人編マス (21-40) -->
+                <div class="square work-square" data-position="21">
+                    <div class="square-header">
+                        <span class="square-number">21</span>
+                        <span class="square-icon">🏢</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">就職活動</div>
+                        <div class="square-description">スーツ代がかかった</div>
+                        <div class="square-effect">-800円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="22">
+                    <div class="square-header">
+                        <span class="square-number">22</span>
+                        <span class="square-icon">💼</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">初出勤</div>
+                        <div class="square-description">歓迎会で飲み会代</div>
+                        <div class="square-effect">-500円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="23">
+                    <div class="square-header">
+                        <span class="square-number">23</span>
+                        <span class="square-icon">💰</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">初任給</div>
+                        <div class="square-description">念願の給料日</div>
+                        <div class="square-effect">+1000円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="24">
+                    <div class="square-header">
+                        <span class="square-number">24</span>
+                        <span class="square-icon">😴</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">遅刻してタクシー</div>
+                        <div class="square-description">交通費がかかった</div>
+                        <div class="square-effect">-300円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="25">
+                    <div class="square-header">
+                        <span class="square-number">25</span>
+                        <span class="square-icon">🏆</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">プロジェクト成功</div>
+                        <div class="square-description">ボーナスをもらった</div>
+                        <div class="square-effect">+800円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="26">
+                    <div class="square-header">
+                        <span class="square-number">26</span>
+                        <span class="square-icon">🎉</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">同僚の結婚式</div>
+                        <div class="square-description">ご祝儀を包んだ</div>
+                        <div class="square-effect">-600円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="27">
+                    <div class="square-header">
+                        <span class="square-number">27</span>
+                        <span class="square-icon">📈</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">昇格</div>
+                        <div class="square-description">昇格祝いをもらった</div>
+                        <div class="square-effect">+700円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="28">
+                    <div class="square-header">
+                        <span class="square-number">28</span>
+                        <span class="square-icon">🍻</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">忘年会</div>
+                        <div class="square-description">飲み過ぎて散財</div>
+                        <div class="square-effect">-400円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="29">
+                    <div class="square-header">
+                        <span class="square-number">29</span>
+                        <span class="square-icon">💻</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">資格取得</div>
+                        <div class="square-description">資格手当がついた</div>
+                        <div class="square-effect">+500円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="30">
+                    <div class="square-header">
+                        <span class="square-number">30</span>
+                        <span class="square-icon">🚗</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">車を購入</div>
+                        <div class="square-description">頭金を支払った</div>
+                        <div class="square-effect">-1200円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="31">
+                    <div class="square-header">
+                        <span class="square-number">31</span>
+                        <span class="square-icon">🏡</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">引っ越し</div>
+                        <div class="square-description">引っ越し費用がかかった</div>
+                        <div class="square-effect">-800円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="32">
+                    <div class="square-header">
+                        <span class="square-number">32</span>
+                        <span class="square-icon">💍</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">結婚</div>
+                        <div class="square-description">結婚祝いをもらった</div>
+                        <div class="square-effect">+1500円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="33">
+                    <div class="square-header">
+                        <span class="square-number">33</span>
+                        <span class="square-icon">👶</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">子供誕生</div>
+                        <div class="square-description">出産費用がかかった</div>
+                        <div class="square-effect">-1000円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="34">
+                    <div class="square-header">
+                        <span class="square-number">34</span>
+                        <span class="square-icon">📺</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">家電を買い替え</div>
+                        <div class="square-description">冷蔵庫とテレビ購入</div>
+                        <div class="square-effect">-600円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="35">
+                    <div class="square-header">
+                        <span class="square-number">35</span>
+                        <span class="square-icon">✈️</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">家族旅行</div>
+                        <div class="square-description">旅行費用がかかった</div>
+                        <div class="square-effect">-900円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="36">
+                    <div class="square-header">
+                        <span class="square-number">36</span>
+                        <span class="square-icon">💡</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">アイデア特許</div>
+                        <div class="square-description">特許料収入</div>
+                        <div class="square-effect">+1200円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="37">
+                    <div class="square-header">
+                        <span class="square-number">37</span>
+                        <span class="square-icon">🎓</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">MBA取得</div>
+                        <div class="square-description">学費がかかった</div>
+                        <div class="square-effect">-1500円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="38">
+                    <div class="square-header">
+                        <span class="square-number">38</span>
+                        <span class="square-icon">🏆</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">優秀社員賞</div>
+                        <div class="square-description">表彰金をもらった</div>
+                        <div class="square-effect">+800円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <div class="square work-square" data-position="39">
+                    <div class="square-header">
+                        <span class="square-number">39</span>
+                        <span class="square-icon">💹</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">投資成功</div>
+                        <div class="square-description">株で大儲け</div>
+                        <div class="square-effect">+2000円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+
+                <!-- ゴールマス -->
+                <div class="square goal-square" data-position="40">
+                    <div class="square-header">
+                        <span class="square-number">GOAL</span>
+                        <span class="square-icon">🏆</span>
+                    </div>
+                    <div class="square-content">
+                        <div class="square-title">人生完走！</div>
+                        <div class="square-description">お疲れ様でした！</div>
+                        <div class="square-effect">+1000円</div>
+                    </div>
+                    <div class="player-tokens"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ゲームコントロール -->
+        <div class="game-controls">
+            <div class="dice-section">
+                <div class="dice" id="dice">
+                    <div class="dice-face">🎲</div>
+                </div>
+                <button class="dice-button" id="dice-button">サイコロを振る</button>
+                <div class="dice-result" id="dice-result">準備完了</div>
+            </div>
+            
+            <div class="turn-indicator">
+                <div class="current-turn" id="current-turn">🎮 プレイヤーのターン</div>
+            </div>
+            
+            <div class="game-buttons">
+                <button class="game-button reset-button" id="reset-button">ゲームリセット</button>
+                <button class="game-button auto-button" id="auto-button">オート進行</button>
+            </div>
+        </div>
+
+        <!-- イベントログ -->
+        <div class="event-log">
+            <h3>📋 イベントログ</h3>
+            <div class="log-content" id="log-content">
+                <div class="log-entry">ゲームを開始しました！</div>
+            </div>
+        </div>
+
+        <!-- ゲーム結果 -->
+        <div class="game-result" id="game-result" style="display: none;">
+            <div class="result-content">
+                <h2>🎉 ゲーム終了！</h2>
+                <div class="final-scores">
+                    <div class="score-item">
+                        <span class="score-label">🎮 プレイヤー:</span>
+                        <span class="score-value" id="final-player-score">0円</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">🤖 CPU:</span>
+                        <span class="score-value" id="final-cpu-score">0円</span>
+                    </div>
+                </div>
+                <div class="winner-announcement" id="winner-announcement"></div>
+                <button class="restart-button" id="restart-button">もう一度プレイ</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
